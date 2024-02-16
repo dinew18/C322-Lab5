@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <label>Type:</label>
+    <input id="type" />
+    <button onclick="search()">Search</button>
+    <br />
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody id="searchResult"></tbody>
+    </table>
+
+    <script>
+        let ducks = []
+        async function getAll() {
+            try {
+                let response = await fetch("http://localhost:8080/ducks"); // Adjust the URL based on your server endpoint
+                let ducks = await response.json();
+                return ducks;
+            } catch (error) {
+                console.error("Error fetching ducks:", error);
+                return [];
+            }
+        }
+
+        async function search() {
+            if(ducks.length == 0){
+               ducks = await getAll();
+            }
+            
+            
+            let duckType = document.getElementById("type").value.toLowerCase();
+            let table = document.getElementById("searchResult");
+            table.innerHTML = "";
+
+
+            for (let duck of ducks) {
+                if (!duckType || duck.type.toLowerCase() == duckType) {
+                    let row = document.createElement("tr");
+                    let cell = document.createElement("td");
+                    let cell1 = document.createElement("td");
+                    let id = document.createTextNode(duck.id);
+                    let type = document.createTextNode(duck.type);
+                    cell.appendChild(id);
+                    row.appendChild(cell);
+                    cell1.appendChild(type);
+                    row.appendChild(cell1);
+                    table.appendChild(row);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
